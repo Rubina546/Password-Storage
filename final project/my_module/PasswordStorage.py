@@ -22,6 +22,8 @@ class PasswordStorage:
     # caesar_key = 0
     attempt = 0
     password_table = {}
+    chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    charsLen = 36
 
 
     def __init__(self, password):
@@ -51,9 +53,12 @@ class PasswordStorage:
         fp = open(self.file)
         line = fp.readline()
         while(line):
-            print(line)
-            if line == '\n': break;
-            (key, val) = line.split(',')
+            if line == '\n':
+                line = fp.readline()
+                continue
+            (key,val) = line.split(',')
+
+            val = val[:-1]
             self.password_table[str(key)] = val
             line = fp.readline()
         fp.close()
@@ -146,7 +151,10 @@ class PasswordStorage:
         answer = ""  # the Cypher text
         p = 0  # pointer for the key
         for char in text:
-            answer += chr(ord(char) ^ ord(key[p]))
+            character = chr(ord(char) ^ ord(key[p]))
+            if character == '\n':
+                continue;
+            answer += character
             p += 1
             if p == len(key):
                 p = 0
